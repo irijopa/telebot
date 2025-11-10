@@ -5,10 +5,11 @@ import "time"
 type TransactionType = string
 
 const (
-	TransactionTypeUser           TransactionType = "user"
-	TransactionTypeFragment       TransactionType = "fragment"
-	TransactionPartnerTelegramAds TransactionType = "telegram_ads"
-	TransactionTypeOther          TransactionType = "other"
+	TransactionTypeUser               TransactionType = "user"
+	TransactionTypeFragment           TransactionType = "fragment"
+	TransactionPartnerTelegramAds     TransactionType = "telegram_ads"
+	TransactionPartnerTelegramApi     TransactionType = "telegram_api"
+	TransactionTypeOther              TransactionType = "other"
 )
 
 type RevenueState = string

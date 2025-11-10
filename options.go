@@ -99,6 +99,10 @@ type SendOptions struct {
 	// Payload is a bot-defined paid media payload, returned in the PaidMediaPurchased update.
 	// 0-128 characters. Used only for sendPaidMedia.
 	Payload string
+
+	// AllowPaidBroadcast allows the message to be sent to users who have not yet
+	// unlocked access to paid channels. Only for messages sent to channels.
+	AllowPaidBroadcast bool
 }
 
 func (og *SendOptions) copy() *SendOptions {
@@ -226,6 +230,10 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 
 	if opt.EffectID != "" {
 		params["message_effect_id"] = opt.EffectID
+	}
+
+	if opt.AllowPaidBroadcast {
+		params["allow_paid_broadcast"] = "true"
 	}
 }
 
