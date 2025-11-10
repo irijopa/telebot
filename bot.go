@@ -1347,6 +1347,24 @@ func (b *Bot) botInfo(language, key string) (*BotInfo, error) {
 	return resp.Result, nil
 }
 
+// SetUserEmojiStatus changes the emoji status for a given user that previously
+// allowed the bot to manage their emoji status via the Mini App Bot API.
+func (b *Bot) SetUserEmojiStatus(user Recipient, emojiStatusCustomEmojiID string, expirationDate ...int64) error {
+	params := map[string]string{
+		"user_id": user.Recipient(),
+	}
+
+	if emojiStatusCustomEmojiID != "" {
+		params["emoji_status_custom_emoji_id"] = emojiStatusCustomEmojiID
+	}
+	if len(expirationDate) > 0 && expirationDate[0] > 0 {
+		params["emoji_status_expiration_date"] = strconv.FormatInt(expirationDate[0], 10)
+	}
+
+	_, err := b.Raw("setUserEmojiStatus", params)
+	return err
+}
+
 func extractEndpoint(endpoint interface{}) string {
 	switch end := endpoint.(type) {
 	case string:
