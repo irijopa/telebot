@@ -434,4 +434,14 @@ type PaidMedia struct {
 	Width    int    `json:"width"`    // preview only
 	Height   int    `json:"height"`   // preview only
 	Duration int    `json:"duration"` // preview only
+	Payload  string `json:"payload,omitempty"`
+}
+
+// PaidMediaPurchased contains information about paid media purchased by a user.
+type PaidMediaPurchased struct {
+	// User who purchased the media.
+	From *User `json:"from"`
+
+	// Bot-specified paid media payload.
+	Payload string `json:"paid_media_payload"`
 }

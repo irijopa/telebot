@@ -320,6 +320,13 @@ func TestBotProcessUpdate(t *testing.T) {
 		return nil
 	})
 
+	b.Handle(OnPurchasedPaidMedia, func(c Context) error {
+		assert.NotNil(t, c.PurchasedPaidMedia())
+		assert.Equal(t, "test_payload", c.PurchasedPaidMedia().Payload)
+		assert.NotNil(t, c.PurchasedPaidMedia().From)
+		return nil
+	})
+
 	b.ProcessUpdate(Update{Message: &Message{Text: "/start"}})
 	b.ProcessUpdate(Update{Message: &Message{Text: "/start@other_bot"}})
 	b.ProcessUpdate(Update{Message: &Message{Text: "hello"}})
@@ -362,6 +369,10 @@ func TestBotProcessUpdate(t *testing.T) {
 	b.ProcessUpdate(Update{Poll: &Poll{ID: "poll"}})
 	b.ProcessUpdate(Update{PollAnswer: &PollAnswer{PollID: "poll"}})
 	b.ProcessUpdate(Update{Message: &Message{WebAppData: &WebAppData{Data: "webapp"}}})
+	b.ProcessUpdate(Update{PurchasedPaidMedia: &PaidMediaPurchased{
+		From:    &User{ID: 123},
+		Payload: "test_payload",
+	}})
 }
 
 func TestBotOnError(t *testing.T) {
@@ -541,17 +552,24 @@ func TestBot(t *testing.T) {
 		assert.NotEmpty(t, msgs[0].AlbumID)
 	})
 
-	t.Run("SendPaid()", func(t *testing.T) {
-		_, err = b.SendPaid(nil, 0, nil)
+	t.Run("SendPaidMedia()", func(t *testing.T) {
+		_, err = b.SendPaidMedia(nil, 0, nil)
 		assert.Equal(t, ErrBadRecipient, err)
 
-		_, err = b.SendPaid(channel, 0, nil)
+		_, err = b.SendPaidMedia(to, 0, nil)
 		assert.Error(t, err)
 
 		photo2 := *photo
 		photo2.Caption = ""
 
-		msg, err := b.SendPaid(channel, 1, PaidAlbum{photo, &photo2}, ModeHTML)
+		msg, err := b.SendPaidMedia(to, 1, PaidAlbum{photo, &photo2}, ModeHTML)
+		require.NoError(t, err)
+		require.NotNil(t, msg)
+		assert.Equal(t, 1, msg.PaidMedia.Stars)
+		assert.Equal(t, 2, len(msg.PaidMedia.PaidMedia))
+
+		// Test with payload
+		msg, err = b.SendPaidMedia(to, 1, PaidAlbum{photo, &photo2}, &SendOptions{Payload: "test_payload_123"})
 		require.NoError(t, err)
 		require.NotNil(t, msg)
 		assert.Equal(t, 1, msg.PaidMedia.Stars)

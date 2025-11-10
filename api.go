@@ -78,7 +78,7 @@ type API interface {
 	RevokeInviteLink(chat Recipient, link string) (*ChatInviteLink, error)
 	Send(to Recipient, what interface{}, opts ...interface{}) (*Message, error)
 	SendAlbum(to Recipient, a Album, opts ...interface{}) ([]Message, error)
-	SendPaid(to Recipient, stars int, a PaidAlbum, opts ...interface{}) (*Message, error)
+	SendPaidMedia(to Recipient, stars int, a PaidAlbum, opts ...interface{}) (*Message, error)
 	SetAdminTitle(chat *Chat, user *User, title string) error
 	SetCommands(opts ...interface{}) error
 	SetCustomEmojiStickerSetThumb(name, id string) error

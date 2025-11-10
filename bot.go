@@ -300,9 +300,9 @@ func (b *Bot) Send(to Recipient, what interface{}, opts ...interface{}) (*Messag
 	}
 }
 
-// SendPaid sends multiple instances of paid media as a single message.
+// SendPaidMedia sends multiple instances of paid media as a single message.
 // To include the caption, make sure the first PaidInputtable of an album has it.
-func (b *Bot) SendPaid(to Recipient, stars int, a PaidAlbum, opts ...interface{}) (*Message, error) {
+func (b *Bot) SendPaidMedia(to Recipient, stars int, a PaidAlbum, opts ...interface{}) (*Message, error) {
 	if to == nil {
 		return nil, ErrBadRecipient
 	}
@@ -338,6 +338,10 @@ func (b *Bot) SendPaid(to Recipient, stars int, a PaidAlbum, opts ...interface{}
 
 	params["media"] = "[" + strings.Join(media, ",") + "]"
 	b.embedSendOptions(params, sendOpts)
+
+	if sendOpts.Payload != "" {
+		params["payload"] = sendOpts.Payload
+	}
 
 	data, err := b.sendFiles("sendPaidMedia", files, params)
 	if err != nil {

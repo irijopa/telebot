@@ -95,6 +95,10 @@ type SendOptions struct {
 
 	// Unique identifier of the message effect to be added to the message; for private chats only
 	EffectID string
+
+	// Payload is a bot-defined paid media payload, returned in the PaidMediaPurchased update.
+	// 0-128 characters. Used only for sendPaidMedia.
+	Payload string
 }
 
 func (og *SendOptions) copy() *SendOptions {
@@ -226,7 +230,7 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 }
 
 func processButtons(keys [][]InlineButton) {
-	if keys == nil || len(keys) < 1 || len(keys[0]) < 1 {
+	if len(keys) < 1 || len(keys[0]) < 1 {
 		return
 	}
 
