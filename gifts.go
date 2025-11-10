@@ -48,12 +48,25 @@ func (b *Bot) GetAvailableGifts() ([]Gift, error) {
 	return resp.Result.Gifts, nil
 }
 
-// SendGift sends a gift to the given user. The gift can't be converted to Telegram Stars by the user.
+// SendGift sends a gift to the given user or chat member. The gift can't be converted to Telegram Stars by the user.
 // Additional text can be passed as a string option. PayForUpgrade can be passed as a bool to pay for upgrading the gift.
+// For Bot API 8.3+, you can pass a chat as the first parameter to send gifts to specific chat members.
 func (b *Bot) SendGift(to Recipient, giftID string, opts ...interface{}) error {
 	params := map[string]string{
-		"user_id": to.Recipient(),
 		"gift_id": giftID,
+	}
+
+	// Check if recipient is a user or chat
+	switch to.(type) {
+	case *User:
+		// Send to user directly
+		params["user_id"] = to.Recipient()
+	case *Chat:
+		// Bot API 8.3: Send to chat member (requires additional chat_id parameter)
+		params["chat_id"] = to.Recipient()
+	default:
+		// Default to user_id for backward compatibility
+		params["user_id"] = to.Recipient()
 	}
 
 	for _, opt := range opts {

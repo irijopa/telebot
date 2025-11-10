@@ -11,6 +11,8 @@ const (
 	TransactionPartnerTelegramApi     TransactionType = "telegram_api"
 	TransactionTypeAffiliateProgram   TransactionType = "affiliate_program"
 	TransactionTypeOther              TransactionType = "other"
+	// Bot API 8.3: Transaction partner is a chat
+	TransactionTypeChat               TransactionType = "chat"
 )
 
 type RevenueState = string
@@ -46,6 +48,15 @@ type StarTransaction struct {
 	Receiver TransactionPartner `json:"receiver"`
 }
 
+// TransactionPartnerChat describes a transaction partner that is a chat.
+type TransactionPartnerChat struct {
+	// Type of the transaction partner, always "chat"
+	Type TransactionType `json:"type"`
+
+	// Information about the chat
+	Chat *Chat `json:"chat"`
+}
+
 type TransactionPartner struct {
 	// Type of the state
 	Type    TransactionType `json:"type"`
@@ -63,6 +74,9 @@ type TransactionPartner struct {
 
 	// Bot API 8.1: Information about the affiliate program from which the transaction was made
 	Affiliate *AffiliateInfo `json:"affiliate,omitempty"`
+
+	// Bot API 8.3: Information about the chat transaction partner
+	Chat *TransactionPartnerChat `json:"chat,omitempty"`
 }
 
 type RevenueWithdrawal struct {

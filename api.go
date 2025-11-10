@@ -18,6 +18,7 @@ type API interface {
 	BusinessConnection(id string) (*BusinessConnection, error)
 	ChatByID(id int64) (*Chat, error)
 	ChatByUsername(name string) (*Chat, error)
+	ChatFullInfo(chat Recipient) (*ChatFullInfo, error)
 	ChatMemberOf(chat, user Recipient) (*ChatMember, error)
 	Close() (bool, error)
 	CloseGeneralTopic(chat *Chat) error

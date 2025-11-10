@@ -451,6 +451,14 @@ func (b *Bot) Forward(to Recipient, msg Editable, opts ...interface{}) (*Message
 	sendOpts := b.extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
+	// Check for video_start_timestamp option (Bot API 8.3)
+	for _, opt := range opts {
+		if ts, ok := opt.(int64); ok && ts > 0 {
+			params["video_start_timestamp"] = strconv.FormatInt(ts, 10)
+			break
+		}
+	}
+
 	data, err := b.Raw("forwardMessage", params)
 	if err != nil {
 		return nil, err
@@ -487,6 +495,14 @@ func (b *Bot) Copy(to Recipient, msg Editable, opts ...interface{}) (*Message, e
 
 	sendOpts := b.extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
+
+	// Check for video_start_timestamp option (Bot API 8.3)
+	for _, opt := range opts {
+		if ts, ok := opt.(int64); ok && ts > 0 {
+			params["video_start_timestamp"] = strconv.FormatInt(ts, 10)
+			break
+		}
+	}
 
 	data, err := b.Raw("copyMessage", params)
 	if err != nil {
@@ -1121,6 +1137,31 @@ func (b *Bot) ChatByUsername(name string) (*Chat, error) {
 	if resp.Result.Type == ChatChannel && resp.Result.Username == "" {
 		resp.Result.Type = ChatChannelPrivate
 	}
+	return resp.Result, nil
+}
+
+// ChatFullInfo fetches full information about a chat.
+func (b *Bot) ChatFullInfo(chat Recipient) (*ChatFullInfo, error) {
+	params := map[string]string{
+		"chat_id": chat.Recipient(),
+	}
+
+	data, err := b.Raw("getChat", params)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp struct {
+		Result *ChatFullInfo
+	}
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return nil, wrapError(err)
+	}
+
+	if resp.Result.Type == ChatChannel && resp.Result.Username == "" {
+		resp.Result.Type = ChatChannelPrivate
+	}
+
 	return resp.Result, nil
 }
 
