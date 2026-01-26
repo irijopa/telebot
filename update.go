@@ -44,17 +44,14 @@ func (b *Bot) ProcessContext(c Context) {
 
 	if u.Message != nil {
 		m := u.Message
-
-		if m.PinnedMessage != nil {
-			b.handle(OnPinned, c)
+		if m.Origin != nil {
+			b.handle(OnForward, c)
+			return
+		}
+		if b.handleMedia(c) {
 			return
 		}
 
-		if m.Origin != nil {
-			b.handle(OnForward, c)
-		}
-
-		// Commands
 		if m.Text != "" {
 			// Filtering malicious messages
 			if m.Text[0] == '\a' {
@@ -83,15 +80,18 @@ func (b *Bot) ProcessContext(c Context) {
 
 			if m.ReplyTo != nil {
 				b.handle(OnReply, c)
+				return
 			}
 
 			b.handle(OnText, c)
 			return
 		}
-
-		if b.handleMedia(c) {
+		if m.PinnedMessage != nil {
+			b.handle(OnPinned, c)
 			return
 		}
+
+		// Commands
 
 		if m.Contact != nil {
 			b.handle(OnContact, c)
