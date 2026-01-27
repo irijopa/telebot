@@ -44,6 +44,10 @@ func (b *Bot) ProcessContext(c Context) {
 
 	if u.Message != nil {
 		m := u.Message
+		if m.Origin != nil && m.AutomaticForward && m.Sender.ID == 777000 {
+			b.handle(OnChannelChatPost, c)
+			return
+		}
 		if m.Origin != nil {
 			b.handle(OnForward, c)
 			return
