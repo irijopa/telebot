@@ -41,7 +41,7 @@ func (b *Bot) ProcessUpdate(u Update) {
 // A started bot calls this function automatically.
 func (b *Bot) ProcessContext(c Context) {
 	u := c.Update()
-
+	return
 	if u.Message != nil {
 		m := u.Message
 		b.handle(OnAny, c)
