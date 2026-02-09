@@ -41,10 +41,11 @@ func (b *Bot) ProcessUpdate(u Update) {
 // A started bot calls this function automatically.
 func (b *Bot) ProcessContext(c Context) {
 	u := c.Update()
-	return
+
 	if u.Message != nil {
 		m := u.Message
 		b.handle(OnAny, c)
+		return
 		if m.Origin != nil && m.AutomaticForward && m.Sender.ID == 777000 {
 			b.handle(OnChannelChatPost, c)
 			return
